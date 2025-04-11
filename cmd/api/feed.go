@@ -6,11 +6,11 @@ import (
 )
 
 func (app *application) getUserFeedHandler(w http.ResponseWriter, r *http.Request) {
-
 	fq := store.PaginatedFeedQuery{
 		Limit:  20,
 		Offset: 0,
 		Sort:   "desc",
+		Tags:   []string{},
 	}
 
 	fq, err := fq.Parse(r)
@@ -19,14 +19,15 @@ func (app *application) getUserFeedHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	if err := Validade.Struct(fq); err != nil {
+	if err := Validate.Struct(fq); err != nil {
 		app.badRequestResponse(w, r, err)
 		return
 	}
 
 	ctx := r.Context()
+	user := getUserFromCtx(r)
 
-	feed, err := app.store.Posts.GetUserFeed(ctx, int64(1), fq)
+	feed, err := app.store.Posts.GetUserFeed(ctx, user.ID, fq)
 	if err != nil {
 		app.internalServerError(w, r, err)
 		return

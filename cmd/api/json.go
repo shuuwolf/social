@@ -7,10 +7,10 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-var Validade *validator.Validate
+var Validate *validator.Validate
 
 func init() {
-	Validade = validator.New(validator.WithRequiredStructEnabled())
+	Validate = validator.New(validator.WithRequiredStructEnabled())
 }
 
 func writeJSON(w http.ResponseWriter, status int, data any) error {
@@ -20,8 +20,9 @@ func writeJSON(w http.ResponseWriter, status int, data any) error {
 }
 
 func readJSON(w http.ResponseWriter, r *http.Request, data any) error {
-	maxBytes := 1_048_578 //1mb
+	maxBytes := 1_048_578 // 1mb
 	r.Body = http.MaxBytesReader(w, r.Body, int64(maxBytes))
+
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 
